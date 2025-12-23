@@ -17,7 +17,7 @@ export async function authenticateJWT(
     await request.jwtVerify();
     // 将解码后的 payload 赋值给 user
     (request as AuthenticatedRequest).user = request.user as JWTPayload;
-  } catch (error) {
+  } catch {
     reply.code(401).send({ error: 'Unauthorized: Invalid token' });
   }
 }

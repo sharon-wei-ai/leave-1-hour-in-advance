@@ -29,9 +29,9 @@ const defaultOptions: Required<SanitizeOptions> = {
  */
 const SENSITIVE_PATTERNS = {
   // API 密钥模式
-  apiKey: /(api[_-]?key|apikey)\s*[:=]\s*['"]?([a-zA-Z0-9_\-]{20,})['"]?/gi,
+  apiKey: /(api[_-]?key|apikey)\s*[:=]\s*['"]?([a-zA-Z0-9_-]{20,})['"]?/gi,
   // Token 模式
-  token: /(token|bearer|authorization)\s*[:=]\s*['"]?([a-zA-Z0-9_\-\.]{20,})['"]?/gi,
+  token: /(token|bearer|authorization)\s*[:=]\s*['"]?([a-zA-Z0-9_\-.]{20,})['"]?/gi,
   // 密码模式
   password: /(password|pwd|pass)\s*[:=]\s*['"]?([^'"]+)['"]?/gi,
   // 邮箱模式（PII）
