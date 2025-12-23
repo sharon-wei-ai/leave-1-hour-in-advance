@@ -8,9 +8,12 @@
     "runtime-executor"
   ],
   "scripts": {
-    "lint": "echo \"(placeholder) add workspace lint\"",
-    "test": "echo \"(placeholder) add workspace test\"",
-    "build": "echo \"(placeholder) add workspace build\""
+    "dev": "pnpm --filter @leave1hourinadvance/frontend dev & pnpm --filter @leave1hourinadvance/backend dev",
+    "build": "pnpm --filter @leave1hourinadvance/frontend build && pnpm --filter @leave1hourinadvance/backend build",
+    "lint": "pnpm --filter @leave1hourinadvance/frontend lint && pnpm --filter @leave1hourinadvance/backend lint",
+    "type-check": "pnpm --filter @leave1hourinadvance/frontend type-check && pnpm --filter @leave1hourinadvance/backend type-check"
+  },
+  "devDependencies": {
+    "prettier": "^3.7.4"
   }
 }
-

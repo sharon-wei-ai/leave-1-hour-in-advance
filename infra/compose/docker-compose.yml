@@ -1,45 +1,144 @@
 version: "3.9"
 
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
+
 services:
+  # 数据库
   postgres:
     image: postgres:15-alpine
+    container_name: compose-postgres
     environment:
-      POSTGRES_PASSWORD: example
-      POSTGRES_USER: app
-      POSTGRES_DB: app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-example}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_DB: ${POSTGRES_DB:-app}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # Redis 缓存
   redis:
     image: redis:7-alpine
+    container_name: compose-redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    command: redis-server --appendonly yes
 
+  # 消息队列
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    container_name: compose-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # 占位：后端 / 调度器 / 运行时池
+  # 后端服务（占位，后续替换为实际镜像）
   backend:
-    image: alpine
-    command: ["sh", "-c", "echo backend placeholder"]
+    image: alpine:latest
+    container_name: compose-backend
+    command: ["sh", "-c", "echo 'Backend placeholder - implement when ready' && sleep 3600"]
+    networks:
+      - app-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-example}@postgres:5432/${POSTGRES_DB:-app}
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672
 
+  # 调度器（占位，后续替换为实际镜像）
   dispatcher:
-    image: alpine
-    command: ["sh", "-c", "echo dispatcher placeholder"]
+    image: alpine:latest
+    container_name: compose-dispatcher
+    command: ["sh", "-c", "echo 'Dispatcher placeholder - implement when ready' && sleep 3600"]
+    networks:
+      - app-network
+    depends_on:
+      - rabbitmq
+      - redis
 
-  # 占位：运行时池（后续替换为实际 runtime 镜像）
+  # 运行时池 - Python（占位，后续替换为实际 runtime 镜像）
   runtime-python:
-    image: alpine
-    command: ["sh", "-c", "echo runtime-python placeholder"]
+    image: alpine:latest
+    container_name: compose-runtime-python
+    command: ["sh", "-c", "echo 'Python runtime placeholder' && sleep 3600"]
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
 
+  # 运行时池 - Node.js（占位，后续替换为实际 runtime 镜像）
   runtime-node:
-    image: alpine
-    command: ["sh", "-c", "echo runtime-node placeholder"]
+    image: alpine:latest
+    container_name: compose-runtime-node
+    command: ["sh", "-c", "echo 'Node.js runtime placeholder' && sleep 3600"]
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
 
+  # 运行时池 - Java（占位，后续替换为实际 runtime 镜像）
   runtime-java:
-    image: alpine
-    command: ["sh", "-c", "echo runtime-java placeholder"]
-
+    image: alpine:latest
+    container_name: compose-runtime-java
+    command: ["sh", "-c", "echo 'Java runtime placeholder' && sleep 3600"]
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M

@@ -25,3 +25,13 @@ Thumbs.db
 .vscode
 .idea
 
+# Markdown documents (all .md files)
+# 所有 .md 文件不提交到仓库，包括：
+# - README.md, CONTRIBUTING.md 等根目录文档
+# - 子目录中的 README.md
+# - docs/ 目录下的所有 .md 文档
+# - 计划文档（周计划-*.md, 开发计划.md 等）
+# - 需求文档、原型说明等
+*.md
+**/*.md
+
