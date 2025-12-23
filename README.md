@@ -49,8 +49,12 @@
 `main` 分支已启用保护规则：
 - ✅ **禁止直接推送**：所有更改必须通过 Pull Request
 - ✅ **必须通过 CI 检查**：`docker-build` 必须通过才能合并
-- ✅ **需要 PR 审核**：至少需要 1 个审批才能合并
+- ⚠️ **需要 PR 审核**：当前设置为 0 个审批（临时设置，适用于单人开发）
+  - 当第二个团队成员加入后，需要将 `required_approving_review_count` 恢复为 1
+  - 恢复命令：见下方"恢复审批要求"部分
 - ✅ **管理员也需遵守**：包括管理员在内的所有用户都必须遵守规则
+
+> **注意**：当前审批要求为 0 是临时设置，便于单人开发。当团队有第二个成员时，请及时恢复审批要求为 1，以确保代码质量。
 
 ### 提交流程
 
@@ -99,6 +103,20 @@
 - `refactor:` 重构
 - `test:` 测试相关
 - `chore:` 构建/工具相关
+
+### 恢复审批要求（当第二个成员加入时）
+
+当团队有第二个成员后，需要将分支保护规则的审批要求恢复为 1：
+
+```powershell
+$json='{"required_status_checks":{"strict":true,"contexts":["docker-build"]},"enforce_admins":true,"required_pull_request_reviews":{"required_approving_review_count":1},"restrictions":null}'; $json | & "C:\Program Files\GitHub CLI\gh.exe" api -X PUT -H "Accept: application/vnd.github+json" /repos/sharon-wei-ai/leave-1-hour-in-advance/branches/main/protection --input -
+```
+
+或者通过 GitHub 网页界面：
+1. 进入仓库 Settings → Branches
+2. 编辑 `main` 分支的保护规则
+3. 在 "Require pull request reviews before merging" 中设置 "Required number of approvals" 为 1
+4. 保存更改
 
 ## 相关文档
 
