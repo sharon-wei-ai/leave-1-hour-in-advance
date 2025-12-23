@@ -1,0 +1,38 @@
+name: CI (placeholder)
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  lint-test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Install deps (placeholder)
+        run: pnpm install --frozen-lockfile || pnpm install
+      - name: Lint (placeholder)
+        run: pnpm lint
+      - name: Test (placeholder)
+        run: pnpm test
+      - name: Build (placeholder)
+        run: pnpm build
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: lint-test-build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker login (placeholder)
+        run: echo "skip login in placeholder"
+      - name: Docker build backend (placeholder)
+        run: |
+          echo "docker build -t backend:placeholder ."
+      - name: Docker build dispatcher (placeholder)
+        run: |
+          echo "docker build -t dispatcher:placeholder ."
+

@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_USER: app
+      POSTGRES_DB: app
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  # 占位：后端 / 调度器 / 运行时池
+  backend:
+    image: alpine
+    command: ["sh", "-c", "echo backend placeholder"]
+
+  dispatcher:
+    image: alpine
+    command: ["sh", "-c", "echo dispatcher placeholder"]
+
+  # 占位：运行时池（后续替换为实际 runtime 镜像）
+  runtime-python:
+    image: alpine
+    command: ["sh", "-c", "echo runtime-python placeholder"]
+
+  runtime-node:
+    image: alpine
+    command: ["sh", "-c", "echo runtime-node placeholder"]
+
+  runtime-java:
+    image: alpine
+    command: ["sh", "-c", "echo runtime-java placeholder"]
+
