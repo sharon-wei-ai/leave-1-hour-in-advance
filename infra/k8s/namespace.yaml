@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: leave1hourinadvance
+  labels:
+    name: leave1hourinadvance
+    environment: development
+
